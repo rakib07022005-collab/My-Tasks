@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>MY TASKS</title>
+<style>
+:root{--bg:#000;--s1:#080d17;--s2:#0f1726;--bd:#1a2640;--tx:#dce8ff;--mu:#6f84a8;--ac:#2f8bff;--ok:#27e08a;--wa:#ffb020;--er:#ff4d6d;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 ui-monospace,"SF Mono",Menlo,Consolas,monospace;padding-bottom:90px;background-image:radial-gradient(ellipse at top,#0b1c3a 0,#000 60%)}
+#r{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:22px;letter-spacing:3px;margin:0;color:var(--ac);text-shadow:0 0 14px #2f8bff66}
+h3{margin:18px 0 8px;font-size:13px;letter-spacing:2px;color:var(--mu);text-transform:uppercase}
+.hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sub{color:var(--mu);font-size:12px}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px;animation:up .35s ease both}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ov{position:fixed;inset:0;background:#000a;display:flex;align-items:flex-end;justify-content:center;z-index:30;animation:fd .2s}
+@keyframes fd{from{opacity:0}to{opacity:1}}
+.sheet{max-height:92vh;overflow:auto;background:var(--s2);border:1px solid var(--bd);border-radius:18px 18px 0 0;width:100%;max-width:640px;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));animation:up .25s ease}
+input,select,textarea{width:100%;resize:none;background:#000;color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:11px;font:inherit;margin-bottom:10px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--ac);box-shadow:0 0 0 2px #2f8bff33}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer}
+.btn.g{background:transparent;border:1px solid var(--bd);color:var(--mu)}
+.row{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--s1);border:1px solid var(--bd);border-radius:12px;margin-bottom:8px;animation:up .3s ease both;transition:.2s}
+.row.done .ti{text-decoration:line-through;color:var(--mu)}
+.row.miss{border-color:#ff4d6d77}
+.grow{flex:1;min-width:0;cursor:pointer}
+.ti{font-weight:600;overflow:hidden;text-overflow:ellipsis}
+.meta{font-size:11px;color:var(--mu)}
+.chk{width:26px;height:26px;border-radius:8px;border:2px solid var(--ac);background:transparent;color:#000;font-weight:900;cursor:pointer;flex:none;transition:.2s}
+.chk.on{background:var(--ok);border-color:var(--ok);box-shadow:0 0 12px #27e08a77}
+.x{background:none;border:0;color:var(--mu);font-size:16px;cursor:pointer;padding:6px}
+.x:hover{color:var(--er)}
+.bar{height:8px;background:#0b1424;border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ok));transition:width .6s ease}
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#050a14ee;backdrop-filter:blur(10px);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px);z-index:20}
+.nav button{flex:1;background:none;border:0;color:var(--mu);padding:10px 0;font:inherit;font-size:10px;cursor:pointer;letter-spacing:1px}
+.nav button b{display:block;font-size:18px}
+.nav button.on{color:var(--ac)}
+.fab{position:fixed;right:18px;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:54px;height:54px;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:28px;box-shadow:0 0 22px #2f8bffaa;cursor:pointer;z-index:25}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal div{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;background:var(--s1);border:1px solid var(--bd);cursor:pointer}
+.cal .h{background:none;border:0;color:var(--mu);aspect-ratio:auto;cursor:default}
+.cal .sel{outline:2px solid var(--ac)}
+.cal .td{border-color:var(--ac)}
+.empty{text-align:center;color:var(--mu);padding:26px 0}
+.ring{display:flex;align-items:center;gap:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.two .card{flex-direction:column;text-align:center;gap:6px;padding:12px 6px;margin-bottom:0}
+.two .card svg{width:88px;height:88px}
+</style></head>
+<body><div id="r"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script>
+const {createElement:h,useState,useEffect}=React;
+/* Storage adapter: swap this object for an API/cloud (Supabase etc.) adapter later. data.user is reserved for auth. */
+const Store={key:'mytasks.v1',load(){try{return JSON.parse(localStorage.getItem(this.key))}catch(e){return null}},save(d){try{localStorage.setItem(this.key,JSON.stringify(d))}catch(e){}}};
+const CATS=['Work','Study','Health','Personal','Finance'],PRI=['High','Medium','Low'],REP=[['once','Once'],['daily','Daily'],['weekly','Weekly'],['monthly','Monthly']];
+const PC={High:'var(--er)',Medium:'var(--wa)',Low:'var(--ok)'};
+const pad=n=>String(n).padStart(2,'0');
+const dk=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const pd=k=>new Date(k+'T00:00:00');
+const addDays=(k,n)=>{const d=pd(k);d.setDate(d.getDate()+n);return dk(d)};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const occurs=(t,k)=>{if(k<t.date)return false;if(t.rep==='once')return k===t.date;if(t.rep==='daily')return true;if(t.rep==='weekly')return pd(k).getDay()===pd(t.date).getDay();return pd(k).getDate()===pd(t.date).getDate()};
+const forDay=(tasks,k)=>tasks.filter(t=>occurs(t,k)).sort((a,b)=>PRI.indexOf(a.pri)-PRI.indexOf(b.pri));
+const NS={notes:{},from:'9999-99-99'};
+const hasNote=k=>(NS.notes[k]||[]).length>0;
+/* Daily note is a fixed task: from notesFrom up to today, each day counts one extra item that is done only if at least 1 note exists */
+const stat=(tasks,k)=>{const l=forDay(tasks,k);let n=l.length,d=l.filter(t=>t.done[k]).length;if(k>=NS.from&&k<=dk(new Date())){n++;if(hasNote(k))d++}return{n,d,p:n?Math.round(d/n*100):0}};
+
+function Row({t,k,toggle,edit,del,chk=true,miss=false}){
+  const on=!!t.done[k],[cf,setCf]=useState(false);
+  return h('div',{className:'row'+(chk&&on?' done':'')+(miss&&!on?' miss':'')},
+    chk&&h('button',{className:'chk'+(on?' on':''),onClick:()=>toggle(t.id,k),'aria-label':'toggle'},on?'✓':''),
+    h('div',{className:'grow',onClick:()=>edit(t)},h('div',{className:'ti'},t.title),
+      h('div',{className:'meta'},h('span',{style:{color:PC[t.pri]}},'● '+t.pri),' · '+t.cat+' · '+t.rep+(chk?'':' · '+t.date)+(miss&&!on?' · MISSED':''))),
+    del&&h('button',{className:'x',style:cf?{color:'var(--er)',fontSize:12}:undefined,onClick:()=>cf?del(t.id):(setCf(true),setTimeout(()=>setCf(false),3000))},cf?'Delete?':'✕'));
+}
+
+function Modal({t,isNew,onSave,onClose}){
+  const [f,setF]=useState(t);
+  const s=(k,v)=>setF(x=>({...x,[k]:v}));
+  const sel=(k,o)=>h('select',{value:f[k],onChange:e=>s(k,e.target.value)},o.map(x=>Array.isArray(x)?h('option',{key:x[0],value:x[0]},x[1]):h('option',{key:x},x)));
+  return h('div',{className:'ov',onClick:onClose},h('div',{className:'sheet',onClick:e=>e.stopPropagation()},
+    h('h3',{style:{marginTop:0}},isNew?'New task':'Edit task'),
+    h('input',{placeholder:'Task title',value:f.title,autoFocus:true,onChange:e=>s('title',e.target.value)}),
+    h('div',{className:'g2'},sel('cat',CATS),sel('pri',PRI),sel('rep',REP),h('input',{type:'date',value:f.date,onChange:e=>s('date',e.target.value||f.date)})),
+    h('div',{className:'g2'},h('button',{className:'btn g',onClick:onClose},'Cancel'),h('button',{className:'btn',onClick:()=>f.title.trim()&&onSave({...f,title:f.title.trim()})},'Save'))));
+}
+
+function MonthCard({tasks,today}){
+  const C=2*Math.PI*46,t=pd(today),dim=new Date(t.getFullYear(),t.getMonth()+1,0).getDate();
+  let sum=0,act=0,n=0,d=0;
+  for(let i=1;i<=t.getDate();i++){const s=stat(tasks,t.getFullYear()+'-'+pad(t.getMonth()+1)+'-'+pad(i));if(s.n){sum+=s.d/s.n*100;act++;n+=s.n;d+=s.d}}
+  const p=Math.round(sum/dim*100)/100;
+  return h('div',{className:'card ring'},
+    h('svg',{width:110,height:110,viewBox:'0 0 110 110'},
+      h('circle',{cx:55,cy:55,r:46,fill:'none',stroke:'#0f1a2e',strokeWidth:9}),
+      h('circle',{cx:55,cy:55,r:46,fill:'none',stroke:'var(--ok)',strokeWidth:9,strokeLinecap:'round',strokeDasharray:C,strokeDashoffset:C*(1-p/100),transform:'rotate(-90 55 55)',style:{transition:'stroke-dashoffset .7s ease',filter:'drop-shadow(0 0 5px #27e08a)'}}),
+      h('text',{x:55,y:61,textAnchor:'middle',fill:'var(--tx)',fontSize:22,fontWeight:700},p+'%')),
+    h('div',null,h('div',{className:'sub'},'THIS MONTH'),h('div',{style:{fontSize:18,fontWeight:700}},d+' / '+n+' done'),h('div',{className:'sub'},'daily % total ÷ '+dim+' days')));
+}
+
+function Today({tasks,today,toggle,edit,add}){
+  const [q,setQ]=useState('');
+  const s=stat(tasks,today),C=2*Math.PI*46;
+  const go=()=>{if(q.trim()){add({id:uid(),title:q.trim(),cat:'Personal',pri:'Medium',rep:'once',date:today,done:{}});setQ('')}};
+  const l=forDay(tasks,today);
+  return h('div',null,
+    h('div',{className:'two'},
+    h('div',{className:'card ring'},
+      h('svg',{width:110,height:110,viewBox:'0 0 110 110'},
+        h('circle',{cx:55,cy:55,r:46,fill:'none',stroke:'#0f1a2e',strokeWidth:9}),
+        h('circle',{cx:55,cy:55,r:46,fill:'none',stroke:'var(--ac)',strokeWidth:9,strokeLinecap:'round',strokeDasharray:C,strokeDashoffset:C*(1-s.p/100),transform:'rotate(-90 55 55)',style:{transition:'stroke-dashoffset .7s ease',filter:'drop-shadow(0 0 5px #2f8bff)'}}),
+        h('text',{x:55,y:61,textAnchor:'middle',fill:'var(--tx)',fontSize:22,fontWeight:700},s.p+'%')),
+      h('div',null,h('div',{className:'sub'},'TODAY'),h('div',{style:{fontSize:18,fontWeight:700}},s.d+' / '+s.n+' done'),h('div',{className:'sub'},s.n?(s.p===100?'All clear. Great work.':(s.n-s.d)+' remaining'+(hasNote(today)?'':' · incl. daily note')):'No tasks scheduled today'))),
+    h(MonthCard,{tasks,today})),
+    h('div',{className:'g2',style:{gridTemplateColumns:'1fr auto'}},h('input',{placeholder:'Quick add a task and press Enter',value:q,onChange:e=>setQ(e.target.value),onKeyDown:e=>e.key==='Enter'&&go()}),h('button',{className:'btn',style:{marginBottom:10},onClick:go},'Add')),
+    h('h3',null,'Today'),
+    l.length?l.map(t=>h(Row,{key:t.id,t,k:today,toggle,edit})):h('div',{className:'empty'},'Nothing planned. Add a task below.'));
+}
+
+function Tasks({tasks,today,edit,del}){
+  const [q,setQ]=useState(''),[c,setC]=useState(''),[p,setP]=useState('');
+  const l=tasks.filter(t=>t.title.toLowerCase().includes(q.toLowerCase())&&(!c||t.cat===c)&&(!p||t.pri===p));
+  const opt=(a,lbl)=>[h('option',{key:'',value:''},lbl)].concat(a.map(x=>h('option',{key:x,value:x},x)));
+  return h('div',null,h('input',{placeholder:'Search tasks',value:q,onChange:e=>setQ(e.target.value)}),
+    h('div',{className:'g2'},h('select',{value:c,onChange:e=>setC(e.target.value)},opt(CATS,'All categories')),h('select',{value:p,onChange:e=>setP(e.target.value)},opt(PRI,'All priorities'))),
+    l.length?l.map(t=>h(Row,{key:t.id,t,k:today,edit,del,chk:false})):h('div',{className:'empty'},'No tasks found'));
+}
+
+function Goals({goals,setGoals}){
+  const [t,setT]=useState(''),[n,setN]=useState('10');
+  const add=()=>{if(t.trim()){setGoals(g=>[...g,{id:uid(),title:t.trim(),target:Math.max(1,+n||1),cur:0}]);setT('')}};
+  const upd=(id,d)=>setGoals(g=>g.map(x=>x.id===id?{...x,cur:Math.max(0,Math.min(x.target,x.cur+d))}:x));
+  return h('div',null,
+    h('div',{className:'g2',style:{gridTemplateColumns:'1fr 80px auto'}},h('input',{placeholder:'New goal',value:t,onChange:e=>setT(e.target.value)}),h('input',{type:'number',min:1,value:n,onChange:e=>setN(e.target.value)}),h('button',{className:'btn',style:{marginBottom:10},onClick:add},'Add')),
+    goals.length?goals.map(g=>h('div',{key:g.id,className:'card'},
+      h('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:8}},h('b',null,g.title),h('button',{className:'x',onClick:()=>setGoals(a=>a.filter(x=>x.id!==g.id))},'✕')),
+      h('div',{className:'bar'},h('i',{style:{width:g.cur/g.target*100+'%'}})),
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:10}},h('span',{className:'sub'},g.cur+' / '+g.target+' ('+Math.round(g.cur/g.target*100)+'%)'),
+        h('span',null,h('button',{className:'btn g',onClick:()=>upd(g.id,-1)},'−'),' ',h('button',{className:'btn',onClick:()=>upd(g.id,1)},'+'))))):h('div',{className:'empty'},'Set your first goal'));
+}
+
+function Notes({d,setD,today}){
+  const [q,setQ]=useState('');
+  const notes=d.notes||{},ok=hasNote(today);
+  const add=c=>{const v=q.trim();if(!v)return;setD(x=>({...x,notes:{...x.notes,[today]:[...((x.notes||{})[today]||[]),{id:uid(),text:v,cat:c,at:new Date().toTimeString().slice(0,5)}]}}));setQ('');setPick(false)};
+  const del=(k,id)=>setD(x=>({...x,notes:{...x.notes,[k]:(x.notes[k]||[]).filter(n=>n.id!==id)}}));
+  const days=[];for(let i=0;i<30;i++){const k=addDays(today,-i);if(k<d.notesFrom)break;days.push(k)}
+  const col=ok?'var(--ok)':'var(--er)';
+  const [on,setOn]=useState(''),[pick,setPick]=useState(false),[flt,setFlt]=useState('');
+  const cats=d.ncats||[];
+  const nl=k=>(notes[k]||[]).filter(n=>!flt||n.cat===flt);
+  const addCat=()=>{const v=on.trim();if(!v)return;if(!cats.some(c=>c.name===v))setD(x=>({...x,ncats:[...(x.ncats||[]),{id:uid(),name:v}]}));setOn('');add(v)};
+  const delCat=id=>setD(x=>({...x,ncats:(x.ncats||[]).filter(c=>c.id!==id)}));
+  return h('div',null,
+    h('div',{className:'card',style:{borderColor:col}},h('b',{style:{color:col}},ok?'✓ Daily note done':'⚠ Daily note required'),h('div',{className:'sub'},ok?'Today note is counted in your daily %.':'Write at least 1 note today, otherwise your daily % is reduced.')),
+    h('textarea',{rows:3,placeholder:'Write today note...',value:q,onChange:e=>setQ(e.target.value)}),
+    h('button',{className:'btn',style:{width:'100%',marginBottom:10},onClick:()=>q.trim()&&setPick(true)},'Save note'),
+    cats.length>0&&h('select',{value:flt,onChange:e=>setFlt(e.target.value)},[h('option',{key:'',value:''},'Show all notes')].concat(cats.map(c=>h('option',{key:c.id,value:c.name},'Show: '+c.name)))),
+    pick&&h('div',{className:'ov',onClick:()=>setPick(false)},h('div',{className:'sheet',onClick:e=>e.stopPropagation()},
+      h('h3',{style:{marginTop:0}},'Which category is this note?'),
+      h('div',{style:{display:'flex',flexWrap:'wrap',gap:8,marginBottom:12}},
+        cats.map(c=>h('span',{key:c.id,style:{display:'inline-flex',alignItems:'center',border:'1px solid var(--ac)',borderRadius:20,padding:'8px 12px',background:'#2f8bff22'}},h('span',{onClick:()=>add(c.name),style:{cursor:'pointer'}},c.name),h('span',{className:'x',style:{padding:'0 0 0 10px',fontSize:12},onClick:()=>delCat(c.id)},'✕'))),
+        h('span',{onClick:()=>add(''),style:{border:'1px solid var(--bd)',borderRadius:20,padding:'8px 12px',color:'var(--mu)',cursor:'pointer'}},'No category')),
+      h('div',{className:'g2',style:{gridTemplateColumns:'1fr auto'}},h('input',{placeholder:'Add category (A, B, C...)',value:on,onChange:e=>setOn(e.target.value),onKeyDown:e=>e.key==='Enter'&&addCat()}),h('button',{className:'btn',style:{marginBottom:10},onClick:addCat},'Add category')),
+      h('button',{className:'btn g',style:{width:'100%'},onClick:()=>setPick(false)},'Cancel'))),
+    days.map(k=>h('div',{key:k},h('h3',null,k+(k===today?' · today':'')),
+      nl(k).length?nl(k).map(n=>h('div',{key:n.id,className:'row'},h('div',{className:'grow',style:{cursor:'default'}},h('div',{className:'ti',style:{whiteSpace:'pre-wrap',fontWeight:400}},n.text),h('div',{className:'meta'},(n.cat?'# '+n.cat+' · ':'')+n.at)),k===today&&h('button',{className:'x',onClick:()=>del(k,n.id)},'✕'))):h('div',{className:'meta',style:{color:'var(--er)'}},'No note written'))));
+}
+
+function Stats({tasks,today}){
+  const days=[0,1,2,3,4,5,6].map(i=>{const k=addDays(today,i-6);return{k,...stat(tasks,k)}});
+  const avg=Math.round(days.reduce((a,d)=>a+d.p,0)/7);
+  let k=today,s=0;const full=x=>{const v=stat(tasks,x);return v.n>0&&v.p===100};
+  if(!full(k))k=addDays(k,-1);
+  while(full(k)&&s<365){s++;k=addDays(k,-1)}
+  const cats=CATS.map(c=>{let n=0,d=0;for(let i=0;i<30;i++){const kk=addDays(today,-i);tasks.filter(t=>t.cat===c&&occurs(t,kk)).forEach(t=>{n++;if(t.done[kk])d++})}return{c,n,p:n?Math.round(d/n*100):0}});
+  return h('div',null,
+    h('div',{className:'g2'},h('div',{className:'card'},h('div',{className:'sub'},'7-DAY AVG'),h('div',{style:{fontSize:26,color:'var(--ac)'}},avg+'%')),h('div',{className:'card'},h('div',{className:'sub'},'STREAK'),h('div',{style:{fontSize:26,color:'var(--ok)'}},s+' days'))),
+    h('h3',null,'Last 7 days'),
+    h('div',{className:'card'},h('svg',{viewBox:'0 0 300 130',width:'100%'},days.map((d,i)=>{const x=i*42+8,ht=d.p*0.85;return h('g',{key:d.k},
+      h('rect',{x,y:100-ht,width:28,height:Math.max(ht,2),rx:5,fill:d.p===100?'var(--ok)':'var(--ac)',style:{transition:'.6s'}}),
+      h('text',{x:x+14,y:94-ht,textAnchor:'middle',fill:'var(--mu)',fontSize:9},d.p+'%'),
+      h('text',{x:x+14,y:118,textAnchor:'middle',fill:'var(--mu)',fontSize:10},'SMTWTFS'[pd(d.k).getDay()]))}))),
+    h('h3',null,'Categories (30 days)'),
+    h('div',{className:'card'},cats.map(c=>h('div',{key:c.c,style:{marginBottom:10}},h('div',{className:'meta',style:{display:'flex',justifyContent:'space-between'}},h('span',null,c.c),h('span',null,c.n?c.p+'%':'-')),h('div',{className:'bar'},h('i',{style:{width:c.p+'%'}}))))));
+}
+
+function Report({tasks,today}){
+  const t=pd(today);
+  let first=NS.from<'9999'?NS.from:today;
+  tasks.forEach(x=>{if(x.date<first)first=x.date});
+  const f=pd(first),rows=[];
+  for(let y=t.getFullYear(),m=t.getMonth();y>f.getFullYear()||(y===f.getFullYear()&&m>=f.getMonth());){
+    const dim=new Date(y,m+1,0).getDate();let sum=0,miss=0;
+    for(let i=1;i<=dim;i++){const k=y+'-'+pad(m+1)+'-'+pad(i);if(k>today)break;const s=stat(tasks,k);if(s.n){sum+=s.d/s.n*100;if(s.p<100)miss++}}
+    rows.push({y,m,p:Math.round(sum/dim*100)/100,miss});
+    m--;if(m<0){m=11;y--}
+  }
+  return h('div',null,h('h3',null,'Monthly report'),h('div',{className:'card'},rows.map(r=>h('div',{key:r.y+'-'+r.m,style:{marginBottom:12}},h('div',{className:'meta',style:{display:'flex',justifyContent:'space-between',marginBottom:4}},h('span',null,new Date(r.y,r.m,1).toLocaleString('en',{month:'long',year:'numeric'})),h('span',null,r.p+'% · '+r.miss+' days incomplete')),h('div',{className:'bar'},h('i',{style:{width:r.p+'%'}}))))));
+}
+
+function Calendar({tasks,today,toggle,edit}){
+  const [m,setM]=useState(()=>{const d=pd(today);d.setDate(1);return d});
+  const [sel,setSel]=useState(today);
+  const first=m.getDay(),dim=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+  const cells=[];for(let i=0;i<first;i++)cells.push(h('div',{key:'e'+i,style:{visibility:'hidden'}}));
+  for(let d=1;d<=dim;d++){const k=m.getFullYear()+'-'+pad(m.getMonth()+1)+'-'+pad(d),s=stat(tasks,k);
+    cells.push(h('div',{key:k,className:(k===sel?'sel ':'')+(k===today?'td':''),style:{background:s.n?`rgba(39,224,138,${0.08+s.p/100*0.5})`:undefined,borderColor:s.n&&s.p<100&&k<today?'#ff4d6d99':undefined},onClick:()=>setSel(k)},d));}
+  const mv=n=>setM(x=>new Date(x.getFullYear(),x.getMonth()+n,1));
+  const l=forDay(tasks,sel),st=stat(tasks,sel);
+  return h('div',null,
+    h('div',{className:'hd'},h('button',{className:'btn g',onClick:()=>mv(-1)},'‹'),h('b',null,m.toLocaleString('en',{month:'long',year:'numeric'})),h('button',{className:'btn g',onClick:()=>mv(1)},'›')),
+    h('div',{className:'cal'},['S','M','T','W','T','F','S'].map((x,i)=>h('div',{key:i,className:'h'},x)),cells),
+    h('h3',null,sel+(st.n?' · '+st.p+'% done':'')),
+    l.length?l.map(t=>h(Row,{key:t.id,t,k:sel,toggle,edit,miss:sel<today})):h('div',{className:'empty'},'No tasks on this day'),
+    sel>=NS.from&&sel<today&&!hasNote(sel)&&h('div',{className:'meta',style:{color:'var(--er)'}},'Daily note missing'),
+    (NS.notes[sel]||[]).map(n=>h('div',{key:n.id,className:'row'},h('div',{className:'grow',style:{cursor:'default'}},h('div',{className:'ti',style:{whiteSpace:'pre-wrap',fontWeight:400}},n.text),h('div',{className:'meta'},(n.cat?'# '+n.cat+' · ':'')+n.at)))));
+}
+
+function App(){
+  const [d,_setD]=useState(()=>{const x=Store.load()||{v:1,user:null,tasks:[],goals:[]};if(!x.notes)x.notes={};if(!x.ncats)x.ncats=[];if(!x.notesFrom)x.notesFrom=dk(new Date());return x});
+  const setD=_setD;
+  const [tab,setTab]=useState('today'),[m,setM]=useState(null);
+  useEffect(()=>{Store.save(d)},[d]);
+  const today=dk(new Date());
+  NS.notes=d.notes||{};NS.from=d.notesFrom||'9999-99-99';
+  const setTasks=f=>setD(x=>({...x,tasks:f(x.tasks)}));
+  const setGoals=f=>setD(x=>({...x,goals:f(x.goals)}));
+  const toggle=(id,k)=>setTasks(a=>a.map(t=>t.id===id?{...t,done:{...t.done,[k]:!t.done[k]}}:t));
+  const add=t=>setTasks(a=>[...a,t]);
+  const save=t=>{setTasks(a=>a.some(x=>x.id===t.id)?a.map(x=>x.id===t.id?t:x):[...a,t]);setM(null)};
+  const del=id=>setTasks(a=>a.filter(t=>t.id!==id));
+  const blank=()=>({id:uid(),title:'',cat:'Personal',pri:'Medium',rep:'once',date:today,done:{}});
+  const edit=t=>setM({t,isNew:false});
+  const P={tasks:d.tasks,today,toggle,edit,del,add};
+  const tabs=[['today','◉','TODAY'],['tasks','☰','TASKS'],['goals','◎','GOALS'],['notes','✎','NOTES'],['stats','▤','STATS'],['cal','▦','CAL']];
+  return h('div',null,
+    h('div',{className:'hd'},h('h1',null,'MY TASKS'),h('span',{className:'sub'},pd(today).toLocaleDateString('en',{weekday:'short',day:'numeric',month:'short'}))),
+    tab==='today'&&h(Today,P),tab==='tasks'&&h(Tasks,P),tab==='goals'&&h(Goals,{goals:d.goals,setGoals}),tab==='notes'&&h(Notes,{d,setD,today}),tab==='stats'&&h(Stats,P),tab==='stats'&&h(Report,P),tab==='cal'&&h(Calendar,P),
+    tab!=='goals'&&tab!=='notes'&&h('button',{className:'fab',onClick:()=>setM({t:blank(),isNew:true}),'aria-label':'Add task'},'+'),
+    h('div',{className:'nav'},tabs.map(x=>h('button',{key:x[0],className:tab===x[0]?'on':'',onClick:()=>setTab(x[0])},h('b',null,x[1]),x[2]))),
+    m&&h(Modal,{t:m.t,isNew:m.isNew,onSave:save,onClose:()=>setM(null)}));
+}
+ReactDOM.createRoot(document.getElementById('r')).render(h(App));
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script></body></html>
